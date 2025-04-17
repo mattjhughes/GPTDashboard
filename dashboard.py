@@ -90,23 +90,7 @@ global_pct = 100 * total_active / total_users if total_users > 0 else 0
 
 st.title("CSU ChatGPT Adoption")
 
-st.markdown(
-    """
-    <style>
-    .systemwide-box {
-        background: #000;
-        border: 2px solid #888;
-        border-radius: 18px;
-        padding: 1.2em 0.5em 0.7em 0.5em;
-        margin-bottom: 1.5em;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        text-align: center;
-    }
-    </style>
-    <div class="systemwide-box">
-    """,
-    unsafe_allow_html=True
-)
+
 
 st.markdown(
     "<div style='font-size:1.3em; font-weight:700; color:#fff; margin-bottom:0.2em'>System-wide Adoption %</div>",
@@ -208,7 +192,7 @@ for idx, row in df_display.iterrows():
         ))
         campus_gauge.update_layout(
             margin=dict(t=10, b=10, l=15, r=15),
-            height=180,
+            height=100,
             paper_bgcolor="#23272b",
             font_color="#fff"
         )
