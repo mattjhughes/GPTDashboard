@@ -72,7 +72,7 @@ total_active = sum(df_display["Active Users"])
 total_users = sum(df_display["Total Users"])
 global_pct = 100 * total_active / total_users if total_users > 0 else 0
 
-st.title("CSU Campus Adoption Dashboard")
+st.title("CSU ChatGPT Adoption")
 
 gauge_fig = go.Figure(go.Indicator(
     mode="gauge+number",
@@ -89,9 +89,20 @@ gauge_fig = go.Figure(go.Indicator(
             {'range': [50, 75], 'color': "#90EE90"},
             {'range': [75, 100], 'color': "#228B22"},
         ],
+        'threshold': {
+            'line': {'color': "#1976D2", 'width': 6},
+            'thickness': 0.85,
+            'value': global_pct
+        }
     }
 ))
 st.plotly_chart(gauge_fig, use_container_width=True)
+
+# --- Total Active Users (Larger) ---
+st.markdown(
+    f"<div style='text-align:center; color:#fff; font-size:2em; margin-top:0.5em'><b>Total Active Users:</b> {total_active:,}</div>",
+    unsafe_allow_html=True
+)
 
 # --- Interactive Map ---
 st.subheader("Campus Adoption Map")
@@ -177,12 +188,12 @@ for idx, row in df_display.iterrows():
             campus_gauge.update_layout(
                 margin=dict(t=10, b=10, l=10, r=10),
                 height=180,
-                paper_bgcolor="#23272b",
+                paper_bgcolor="#000",
                 font_color="#fff"
             )
-            st.plotly_chart(campus_gauge, use_container_width=True)
+            st.plotly_chart(campus_gauge, use_container_width=True, key=f"campus_gauge_{idx}")
             st.markdown(
-                f"<div style='margin-top:-1.2em; margin-bottom:0.5em; color:#fff'><b>Active Users:</b><br>{row['Active Users']} / {row['Total Users']}</div>",
+                f"<div style='text-align:center; margin-top:-1.2em; margin-bottom:0.5em; color:#fff'><b>Active Users:</b><br>{row['Active Users']} / {row['Total Users']}</div>",
                 unsafe_allow_html=True
             )
             if st.session_state["whatif_mode"]:
