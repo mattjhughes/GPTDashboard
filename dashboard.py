@@ -120,10 +120,14 @@ gauge_fig = go.Figure(go.Indicator(
         }
     }
 ))
+gauge_fig.update_layout(
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)'
+)
 st.plotly_chart(gauge_fig, use_container_width=True)
 
 st.markdown(
-    f"<div style='text-align:center; color:#fff; font-size:2em; margin-top:0.5em'><b>Total Active Users:</b> {total_active:,}</div>",
+    f"<div style='text-align:center;  font-size:2em; margin-top:0.5em'><b>Total Active Users:</b> {total_active:,}</div>",
     unsafe_allow_html=True
 )
 st.markdown("</div>", unsafe_allow_html=True)
