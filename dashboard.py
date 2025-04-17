@@ -4,6 +4,21 @@ import numpy as np
 import plotly.graph_objects as go
 import pydeck as pdk
 
+# --- Force black background for the entire app ---
+st.markdown(
+    """
+    <style>
+    body, .stApp, .main, .block-container, .css-18e3th9, .css-1d391kg, .st-cq, .st-emotion-cache-1kyxreq {
+        background-color: #000 !important;
+    }
+    .stSidebar, .css-1d391kg {
+        background-color: #111 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- Constants for color buckets ---
 ADOPTION_BUCKETS = [
     (0, 10, "#FF4B4B"),      # Red
