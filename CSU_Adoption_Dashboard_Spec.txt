@@ -1,0 +1,155 @@
+# CSU Campus Adoption Dashboard - Streamlit Spec Document
+
+## Overview
+
+This project builds an interactive data dashboard using **Streamlit** to visualize the adoption of a program across 23 CSU campuses. The data is sourced from a static CSV file. Users can explore current adoption metrics, simulate changes using sliders, and reset to original values. No user data is stored or saved.
+
+---
+
+## Tools & Libraries
+
+### Framework:
+- **Streamlit**: Core web framework for building the dashboard.
+  - Easy to use, requires minimal front-end work.
+  - Supports UI components like sliders, buttons, and file uploaders.
+  - Automatically handles reruns and reactive behavior.
+
+### Data Handling:
+- **Pandas**: For reading, cleaning, and manipulating CSV data.
+
+### Visualization:
+- **Plotly** or **Altair**: For dynamic charts (pie charts, bar charts).
+- **Pydeck** or **Folium**: For geographic map visualizations.
+- **Streamlit elements**: Such as `st.slider`, `st.map`, `st.metric`, etc.
+
+---
+
+## Data Source
+
+### Format: CSV
+The CSV file should contain the following columns:
+
+- `Campus`: Name of the CSU campus.
+- `Total Users`: Total number of potential users at the campus.
+- `Active Users`: Number of users who have adopted the program.
+- `Adoption %`: Percentage of active users out of total.
+- `Latitude`: Decimal latitude for map visualization.
+- `Longitude`: Decimal longitude for map visualization.
+
+#### Example Row:
+```
+San Diego,44957,15210,33.8,32.7157,-117.1611
+```
+
+---
+
+## Functional Requirements
+
+### A. Global Summary View
+
+1. **Overall Adoption Thermometer/Gauge**
+   - Visualize the total system-wide adoption percentage.
+   - Calculated from: `SUM(Active Users) / SUM(Total Users)`.
+   - Displayed prominently (top or sidebar).
+   - Can be built with Plotly gauge chart or progress bar.
+
+---
+
+### B. Campus-Level Details
+
+1. **Interactive Map**
+   - Each campus is marked on a geographic map.
+   - Marker size reflects total users.
+   - Marker color reflects % adoption:
+     - 0–10%: Red
+     - 11–25%: Orange
+     - 26–50%: Yellow
+     - 51–75%: Light Green
+     - 76–100%: Dark Green
+   - Hover tooltip or popup shows:
+     - Campus Name
+     - Total Users
+     - Active Users
+     - Adoption %
+
+2. **Campus Cards/Grid**
+   - Display all campuses in a scrollable layout.
+   - Each card includes:
+     - Campus name
+     - Mini progress bar or pie chart
+     - Active vs. Total Users
+     - Adoption % (optional text formatting)
+
+---
+
+### C. What-If Sliders
+
+1. **Campus-Specific Sliders**
+   - One slider per campus to simulate a different Active User count.
+   - Range: current `Active Users` to `Total Users`.
+   - Updates all charts and metrics in real-time (on rerun).
+
+2. **Apply What-If Mode**
+   - Checkbox or toggle switch to enable what-if mode.
+   - When enabled, dashboard displays adjusted values from sliders.
+   - Original data remains unchanged.
+
+3. **Reset Button**
+   - Clicking “Reset to CSV” restores original values from the CSV.
+   - No caching or saving needed.
+   - Reverts all sliders and charts.
+
+---
+
+## D. Optional Features (Stretch Goals)
+
+- **Global What-If Slider**:
+  - Increases adoption % uniformly across all campuses.
+  - Good for goal-setting.
+
+- **Color Buckets in Grid**:
+  - Visually group campuses by performance.
+
+- **Data Export Button**:
+  - Exports current (what-if) view to CSV for offline review.
+  - Still doesn't persist anything on server.
+
+---
+
+## Deployment Options
+
+1. **Streamlit Cloud**:
+   - Free hosting for public dashboards.
+   - GitHub integration for version control.
+
+2. **Local Deployment**:
+   - Run via `streamlit run dashboard.py`.
+   - Easy to update CSV manually or via shared drive.
+
+3. **Alternative Hosts**:
+   - Hugging Face Spaces
+   - Fly.io or Render.com (if Streamlit Cloud limitations hit)
+
+---
+
+## User Flow Summary
+
+1. User loads app; dashboard reads CSV.
+2. Global gauge and map load.
+3. User interacts with campus sliders.
+4. Dashboard reflects adjusted totals.
+5. User can reset back to original data.
+6. No data is saved or persisted.
+
+---
+
+## Maintenance Notes
+
+- Ensure CSV has valid lat/lon values.
+- Add a column for each slider state (optional, temporary in memory).
+- Watch out for Streamlit rerun behavior; use `st.session_state` for slider values.
+- Keep UI clean and mobile-friendly if possible.
+
+---
+
+## End of Spec
