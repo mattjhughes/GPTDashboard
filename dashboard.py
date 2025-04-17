@@ -89,11 +89,34 @@ global_pct = 100 * total_active / total_users if total_users > 0 else 0
 
 st.title("CSU ChatGPT Adoption")
 
+st.markdown(
+    """
+    <style>
+    .systemwide-box {
+        background: #000;
+        border: 2px solid #888;
+        border-radius: 18px;
+        padding: 1.2em 0.5em 0.7em 0.5em;
+        margin-bottom: 1.5em;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        text-align: center;
+    }
+    </style>
+    <div class="systemwide-box">
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "<div style='font-size:1.3em; font-weight:700; color:#fff; margin-bottom:0.2em'>System-wide Adoption %</div>",
+    unsafe_allow_html=True
+)
+
 gauge_fig = go.Figure(go.Indicator(
     mode="gauge+number",
     value=global_pct,
     domain={'x': [0, 1], 'y': [0, 1]},
-    title={'text': "System-wide Adoption %"},
+    title={'text': ""},
     gauge={
         'axis': {'range': [0, 100]},
         'bar': {'color': get_adoption_color(global_pct)},
@@ -113,11 +136,11 @@ gauge_fig = go.Figure(go.Indicator(
 ))
 st.plotly_chart(gauge_fig, use_container_width=True)
 
-# --- Total Active Users (Larger) ---
 st.markdown(
     f"<div style='text-align:center; color:#fff; font-size:2em; margin-top:0.5em'><b>Total Active Users:</b> {total_active:,}</div>",
     unsafe_allow_html=True
 )
+st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Interactive Map ---
 st.subheader("Campus Adoption Map")
