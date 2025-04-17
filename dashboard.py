@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -115,6 +116,7 @@ st.markdown(
 gauge_fig = go.Figure(go.Indicator(
     mode="gauge+number",
     value=global_pct,
+    number={'suffix': '%', 'valueformat': '.1f', 'font': {'size': 36, 'color': '#fff'}},
     domain={'x': [0, 1], 'y': [0, 1]},
     title={'text': ""},
     gauge={
@@ -186,63 +188,60 @@ st.subheader("Campus Details & What-If Simulation")
 cols = st.columns(3)
 for idx, row in df_display.iterrows():
     with cols[idx % 3]:
-        with st.container():
-            st.markdown(
-                f"""
-                <style>
-                .campus-box-{idx} {{
-                    background: #23272b;
-                    border: 2px solid #888;
-                    border-radius: 18px;
-                    padding: 0.7em 0.5em 0.5em 0.5em;
-                    margin-bottom: 1.2em;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                    text-align: center;
-                }}
-                </style>
-                <div class="campus-box-{idx}">
-                <div style='font-size:1.1em; font-weight:600; margin-bottom:0.2em; color:#fff'>{row['Campus']}</div>
-                """,
-                unsafe_allow_html=True
+        campus_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=row["Adoption %"],
+            domain={'x': [0, 1], 'y': [0, 1]},
+            title={'text': f"Adoption %", 'font': {'size': 12, 'color': '#fff'}},
+            gauge={
+                'axis': {'range': [0, 100]},
+                'bar': {'color': "#1976D2"},
+                'steps': [
+                    {'range': [0, 10], 'color': "#FF4B4B"},
+                    {'range': [10, 25], 'color': "#FFA500"},
+                    {'range': [25, 50], 'color': "#FFD700"},
+                    {'range': [50, 75], 'color': "#90EE90"},
+                    {'range': [75, 100], 'color': "#228B22"},
+                ],
+            },
+            number={'suffix': "%", 'font': {'size': 18, 'color': '#fff'}}
+        ))
+        campus_gauge.update_layout(
+            margin=dict(t=10, b=10, l=15, r=15),
+            height=180,
+            paper_bgcolor="#23272b",
+            font_color="#fff"
+        )
+        # Render the campus card (title, gauge, count) inside one HTML wrapper
+        card_html = f"""
+        <div style="
+            background: #23272b;
+            border: 2px solid #888;
+            border-radius: 18px;
+            padding: 0.7em 0.5em 0.5em 0.5em;
+            margin-bottom: 1.5em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+        ">
+          <div style='font-size:1.1em; font-weight:600; margin-bottom:0.2em; color:#fff'>
+            {row["Campus"]}
+          </div>
+          {campus_gauge.to_html(full_html=False, include_plotlyjs="cdn")}
+          <div style='text-align:center; margin-top:0.5em; margin-bottom:0.5em; color:#fff'>
+            <b>Active Users:</b><br>{row["Active Users"]} / {row["Total Users"]}
+          </div>
+        </div>
+        """
+        components.html(card_html, height=285)
+
+        if st.session_state["whatif_mode"]:
+            slider_val = st.slider(
+                f"Set Active Users for {row['Campus']}",
+                min_value=0,
+                max_value=int(row["Total Users"]),
+                value=int(st.session_state["slider_values"][idx]),
+                key=f"slider_{idx}"
             )
-            campus_gauge = go.Figure(go.Indicator(
-                mode="gauge+number",
-                value=row["Adoption %"],
-                domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': f"Adoption %", 'font': {'size': 12, 'color': '#fff'}},
-                gauge={
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': "#1976D2"},
-                    'steps': [
-                        {'range': [0, 10], 'color': "#FF4B4B"},
-                        {'range': [10, 25], 'color': "#FFA500"},
-                        {'range': [25, 50], 'color': "#FFD700"},
-                        {'range': [50, 75], 'color': "#90EE90"},
-                        {'range': [75, 100], 'color': "#228B22"},
-                    ],
-                },
-                number={'suffix': "%", 'font': {'size': 18, 'color': '#fff'}}
-            ))
-            campus_gauge.update_layout(
-                margin=dict(t=10, b=10, l=10, r=10),
-                height=180,
-                paper_bgcolor="#000",
-                font_color="#fff"
-            )
-            st.plotly_chart(campus_gauge, use_container_width=True, key=f"campus_gauge_{idx}")
-            st.markdown(
-                f"<div style='text-align:center; margin-top:-1.2em; margin-bottom:0.5em; color:#fff'><b>Active Users:</b><br>{row['Active Users']} / {row['Total Users']}</div>",
-                unsafe_allow_html=True
-            )
-            if st.session_state["whatif_mode"]:
-                slider_val = st.slider(
-                    f"Set Active Users for {row['Campus']}",
-                    min_value=0,
-                    max_value=int(row["Total Users"]),
-                    value=int(st.session_state["slider_values"][idx]),
-                    key=f"slider_{idx}"
-                )
-                st.session_state["slider_values"][idx] = slider_val
-            st.markdown("</div>", unsafe_allow_html=True)
+            st.session_state["slider_values"][idx] = slider_val
 
 st.caption("No data is saved. Reset restores original CSV values.")
