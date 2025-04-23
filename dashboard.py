@@ -83,6 +83,18 @@ df_display["Adoption %"] = np.round(
     100 * df_display["Active Users"] / df_display["Total Users"], 1
 )
 
+# --- Sort Option ---
+sort_option = st.selectbox(
+    "Sort campuses by",
+    options=["Campus", "Adoption %", "Total Users", "Active Users"],
+    index=0
+)
+
+if sort_option == "Campus":
+    df_display = df_display.sort_values(by="Campus", ascending=True)
+else:
+    df_display = df_display.sort_values(by=sort_option, ascending=False)
+
 # --- Global Adoption Gauge ---
 total_active = sum(df_display["Active Users"])
 total_users = sum(df_display["Total Users"])
