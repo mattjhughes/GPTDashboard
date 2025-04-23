@@ -83,18 +83,6 @@ df_display["Adoption %"] = np.round(
     100 * df_display["Active Users"] / df_display["Total Users"], 1
 )
 
-# --- Sort Option ---
-sort_option = st.selectbox(
-    "Sort campuses by",
-    options=["Campus", "Adoption %", "Total Users", "Active Users"],
-    index=0
-)
-
-if sort_option == "Campus":
-    df_display = df_display.sort_values(by="Campus", ascending=True)
-else:
-    df_display = df_display.sort_values(by=sort_option, ascending=False)
-
 # --- Global Adoption Gauge ---
 total_active = sum(df_display["Active Users"])
 total_users = sum(df_display["Total Users"])
@@ -183,7 +171,22 @@ r = pdk.Deck(
 st.pydeck_chart(r, use_container_width=True)
 
 # --- Campus Cards/Grid with What-If Sliders ---
-st.subheader("Campus Details & What-If Simulation")
+st.subheader("Campus Details")
+
+# --- Sort Option ---
+sort_option = st.selectbox(
+    "Sort campuses by",
+    options=["Campus", "Adoption %", "Total Users", "Active Users"],
+    index=0
+)
+
+if sort_option == "Campus":
+    df_display = df_display.sort_values(by="Campus", ascending=True)
+else:
+    df_display = df_display.sort_values(by=sort_option, ascending=False)
+
+# Reset index to maintain proper ordering in grid
+df_display = df_display.reset_index(drop=True)
 
 cols = st.columns(3)
 for idx, row in df_display.iterrows():
